@@ -1,0 +1,27 @@
+---
+import Navbar from "../components/Navbar.astro";
+import Metadata from "../components/Metadata.astro";
+import Loading from "../components/Loading.astro";
+---
+
+<script src="../controllers/validate_session_infopokemon.js"></script>
+<Metadata title="Info pokemon" />
+<Loading />
+<Navbar />
+
+<div
+	class="relative overflow-auto w-full bg-gradient-to-b from-red-800 via-red-500 to-red-700"
+>
+	<div
+		class="w-full min-h-60 bg-pokemon flex flex-col md:flex-row justify-center items-center"
+	>
+		<div
+			id="container-info-pokemon"
+			class="w-full sm:w-full h-screen smt-20 md:mt-0 ml-0 box-border p-4 sm:p-10 relative flex flex-row"
+		>
+		</div>
+	</div>
+</div>
+
+<script src="../controllers/getInfoPokemon.js"></script>
+

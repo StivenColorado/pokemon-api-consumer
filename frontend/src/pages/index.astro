@@ -1,0 +1,81 @@
+---
+import Metadata from "../components/Metadata.astro";
+import Navbar from "../components/Navbar.astro";
+import Loading from "../components/Loading.astro";
+---
+
+<Metadata title="Index" />
+<Loading />
+<Navbar />
+
+<div
+  class="fixed overflow-auto w-full h-screen bg-gradient-to-b from-red-800 via-red-500 to-red-700"
+>
+  <div class="container mx-auto w-full px-4 sm:px-6 lg:px-8 bg-pokemon mb-40">
+    <h1 class="text-3xl font-bold text-center py-8 text-white">
+      Welcome to the Pokémon Characters Website
+      <div class="text-base font-bold text-center py-8">
+        Current Page: <span id="count_page"></span>
+      </div>
+    </h1>
+    <div
+      class="container mx-auto flex flex-row justify-center flex-wrap gap-10"
+      id="container-cards-pokemon"
+    >
+    </div>
+  </div>
+</div>
+<div class="fixed bottom-0 left-0 w-full flex justify-center">
+  <nav aria-label="Page navigation example" class="relative flex">
+    <ul class="flex -space-x-px text-base h-18">
+      <li
+        id="pag-atras"
+        class="flex items-center justify-center m-2 text-2xl text-white bg-transparent backdrop-blur rounded-lg border border-gray-500 shadow-lg min-w-[130px] transition duration-300 ease-in-out hover:bg-gray-800"
+      >
+        <div class="flex items-center">
+          <svg
+            class="w-5 h-5 text-gray-800 dark:text-white"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 10 16"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M7.293 1.707 1.707 7.293a1 1 0 0 0 0 1.414l5.586 5.586A1 1 0 0 0 9 13.586V2.414a1 1 0 0 0-1.707-.707Z"
+            ></path>
+          </svg>
+          <span class="ml-1">Previous</span>
+        </div>
+      </li>
+      <li
+        id="pag-adelante"
+        class="flex items-center justify-center m-2 text-2xl text-white bg-transparent backdrop-blur rounded-lg border border-gray-500 shadow-lg min-w-[130px] transition duration-300 ease-in-out hover:bg-gray-800"
+      >
+        <div class="flex items-center">
+          <span class="mr-1">Next</span>
+          <svg
+            class="w-5 h-5 text-gray-800 dark:text-white"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 10 16"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="m2.707 14.293 5.586-5.586a1 1 0 0 0 0-1.414L2.707 1.707A1 1 0 0 0 1 2.414v11.172a1 1 0 0 0 1.707.707Z"
+            ></path>
+          </svg>
+        </div>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+<script src="../controllers/getAllPokemon.js"></script>
