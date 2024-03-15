@@ -1,7 +1,8 @@
 # pokemon-api-consumer
 
 This mini project consists of consuming a pokemon api and validating sessions
-![Uploading Captura de pantalla 2024-03-15 160705.png…]()
+
+![pokeUI](https://github.com/StivenColorado/pokemon-api-consumer/assets/90488682/6c3cf2b5-75c9-49b8-bb06-ac5b8fd172c2)
 
 ## Description / Descripción
 
