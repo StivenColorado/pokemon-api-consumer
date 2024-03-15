@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 // Verificar el estado de la respuesta
                 if (data.status === 'success') {
-                    alert('asd')
                     // Eliminar las variables del localStorage
                     localStorage.removeItem('email');
                     localStorage.removeItem('pokemonUrl');
