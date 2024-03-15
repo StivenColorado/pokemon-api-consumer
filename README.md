@@ -1,6 +1,7 @@
 # pokemon-api-consumer
 
 This mini project consists of consuming a pokemon api and validating sessions
+![Uploading Captura de pantalla 2024-03-15 160705.png…]()
 
 ## Description / Descripción
 
