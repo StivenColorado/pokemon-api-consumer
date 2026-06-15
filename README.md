@@ -3,7 +3,15 @@
 A frontend Pokédex that consumes the public [PokéAPI](https://pokeapi.co/), built with
 [Astro](https://astro.build/) + Tailwind CSS.
 
-![pokeUI](https://github.com/StivenColorado/pokemon-api-consumer/assets/90488682/6c3cf2b5-75c9-49b8-bb06-ac5b8fd172c2)
+![Pokédex grid](screenshots/home.webp)
+
+## Screenshots
+
+|                          Detail view                          |                       Compare stats                       |
+| :-----------------------------------------------------------: | :-------------------------------------------------------: |
+| ![Pokémon detail](screenshots/detail.webp)                    | ![Stat comparison](screenshots/compare.webp)              |
+|                     **Filter by type**                        |                                                           |
+| ![Type filter](screenshots/type-filter.webp)                  |                                                           |
 
 ## Description / Descripción
 
