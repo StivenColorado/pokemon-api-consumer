@@ -1,27 +1,456 @@
 ---
 import Navbar from "../components/Navbar.astro";
 import Metadata from "../components/Metadata.astro";
-import Loading from "../components/Loading.astro";
 ---
 
-<script src="../controllers/validate_session_infopokemon.js"></script>
-<Metadata title="Info pokemon" />
-<Loading />
+<Metadata title="Pokémon detail" />
 <Navbar />
 
-<div
-	class="relative overflow-auto w-full bg-gradient-to-b from-red-800 via-red-500 to-red-700"
->
-	<div
-		class="w-full min-h-60 bg-pokemon flex flex-col md:flex-row justify-center items-center"
-	>
-		<div
-			id="container-info-pokemon"
-			class="w-full sm:w-full h-screen smt-20 md:mt-0 ml-0 box-border p-4 sm:p-10 relative flex flex-row"
-		>
-		</div>
-	</div>
-</div>
+<main class="detail">
+  <div id="detail" class="detail-inner">
+    <div class="detail-skeleton">
+      <div class="dsk dsk-img"></div>
+      <div class="dsk dsk-lines">
+        <div class="dsk dsk-line" style="width:40%"></div>
+        <div class="dsk dsk-line" style="width:70%"></div>
+        <div class="dsk dsk-line" style="width:55%"></div>
+        <div class="dsk dsk-line" style="width:80%"></div>
+      </div>
+    </div>
+  </div>
+</main>
 
 <script src="../controllers/getInfoPokemon.js"></script>
 
+<style is:global>
+  :root {
+    --bg: #0f1226;
+    --card: #1a1f3a;
+    --card-2: #232a4d;
+    --text: #eef1ff;
+    --muted: #9aa3c7;
+    --ring: rgba(255, 255, 255, 0.08);
+  }
+  html {
+    background: var(--bg);
+  }
+  body {
+    margin: 0;
+    color: var(--text);
+    font-family: "Inter", system-ui, sans-serif;
+    background:
+      radial-gradient(1200px 600px at 10% -10%, #2a1a4a 0%, transparent 60%),
+      radial-gradient(1000px 500px at 100% 0%, #1a2a4a 0%, transparent 55%),
+      var(--bg);
+    min-height: 100vh;
+  }
+
+  .detail {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem 4rem;
+  }
+
+  .back-btn {
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: var(--muted);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+  }
+  .back-btn:hover {
+    color: var(--text);
+  }
+
+  .detail-card {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 1.5rem;
+    background: linear-gradient(160deg, var(--card-2), var(--card));
+    border: 1px solid var(--ring);
+    border-radius: 24px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .detail-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 25% 0%, var(--accent), transparent 55%);
+    opacity: 0.16;
+  }
+  @media (max-width: 720px) {
+    .detail-card {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .detail-left,
+  .detail-right {
+    position: relative;
+    z-index: 1;
+  }
+  .detail-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .detail-img-wrap {
+    width: 230px;
+    height: 230px;
+    display: grid;
+    place-items: center;
+    background: radial-gradient(circle, var(--accent) 0%, transparent 68%);
+  }
+  #detail-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.5));
+    animation: floaty 3.5s ease-in-out infinite;
+  }
+  #detail-img.flip {
+    animation: flip 0.4s ease;
+  }
+  #detail-img.animated {
+    image-rendering: pixelated;
+    object-fit: contain;
+    padding: 1.2rem;
+  }
+  @keyframes floaty {
+    50% {
+      transform: translateY(-12px);
+    }
+  }
+  @keyframes flip {
+    50% {
+      transform: rotateY(90deg) scale(0.9);
+    }
+  }
+
+  .detail-img-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  .pill-btn {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--ring);
+    color: var(--text);
+    border-radius: 999px;
+    padding: 0.4rem 0.9rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.18s;
+  }
+  .pill-btn:hover {
+    transform: translateY(-2px);
+  }
+  .pill-btn.active {
+    background: #ffcb05;
+    color: #1a1f3a;
+    border-color: #ffcb05;
+  }
+
+  /* Botón de sonido destacado */
+  .cry-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(45, 212, 191, 0.16);
+    border-color: #2dd4bf;
+    color: #7ff0e0;
+    animation: cryPulse 2.2s ease-in-out infinite;
+  }
+  .cry-pill:hover {
+    background: rgba(45, 212, 191, 0.28);
+  }
+  @keyframes cryPulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(45, 212, 191, 0.5);
+    }
+    50% {
+      box-shadow: 0 0 0 8px rgba(45, 212, 191, 0);
+    }
+  }
+  .cry-pill .wave {
+    opacity: 0.9;
+  }
+  .cry-pill.playing {
+    animation: none;
+    background: #2dd4bf;
+    color: #07271f;
+  }
+  .cry-pill.playing .wave-1 {
+    animation: wavePop 0.6s ease-in-out infinite;
+  }
+  .cry-pill.playing .wave-2 {
+    animation: wavePop 0.6s ease-in-out infinite 0.2s;
+  }
+  @keyframes wavePop {
+    0%,
+    100% {
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  .detail-num {
+    color: var(--muted);
+    font-weight: 700;
+    margin-top: 0.8rem;
+  }
+  .detail-name {
+    margin: 0.1rem 0 0.6rem;
+    font-size: 2.2rem;
+    font-weight: 800;
+  }
+  .poke-types {
+    display: flex;
+    gap: 0.4rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .type-chip {
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.2rem 0.7rem;
+    border-radius: 999px;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+  }
+
+  .detail-meta {
+    display: flex;
+    gap: 1.2rem;
+    margin: 1.2rem 0;
+  }
+  .detail-meta div {
+    display: flex;
+    flex-direction: column;
+  }
+  .detail-meta span {
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+  .detail-meta small {
+    color: var(--muted);
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+  }
+
+  .fav-detail {
+    background: transparent;
+    border: 1px solid #ff4d6d;
+    color: #ff4d6d;
+    border-radius: 999px;
+    padding: 0.5rem 1.1rem;
+    cursor: pointer;
+    font-weight: 700;
+    transition: all 0.18s;
+  }
+  .fav-detail.active {
+    background: #ff4d6d;
+    color: #fff;
+  }
+
+  .detail-right h2 {
+    margin: 0 0 0.7rem;
+    font-size: 1.1rem;
+  }
+  .detail-right h2:not(:first-child) {
+    margin-top: 1.4rem;
+  }
+  .ability-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .ability {
+    background: var(--card-2);
+    border: 1px solid var(--ring);
+    border-radius: 10px;
+    padding: 0.4rem 0.8rem;
+    font-weight: 600;
+  }
+  .ability em {
+    color: var(--muted);
+    font-weight: 400;
+  }
+  .hidden-ability {
+    border-color: #ffcb0566;
+  }
+
+  .stat-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+  .stat-row {
+    display: grid;
+    grid-template-columns: 70px 38px 1fr;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .stat-name {
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .stat-val {
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    text-align: right;
+  }
+  .stat-track {
+    height: 9px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+  }
+  .stat-fill {
+    height: 100%;
+    border-radius: 999px;
+    animation: growBar 0.7s ease both;
+  }
+  @keyframes growBar {
+    from {
+      transform: scaleX(0);
+      transform-origin: left;
+    }
+  }
+  .stat-row.total .stat-name,
+  .stat-row.total .stat-val {
+    color: var(--text);
+    font-size: 0.95rem;
+  }
+
+  /* ---------- Evolución ---------- */
+  .evolution {
+    margin-top: 2rem;
+  }
+  .evolution h2 {
+    margin-bottom: 1rem;
+  }
+  .evo-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    background: var(--card);
+    border: 1px solid var(--ring);
+    border-radius: 18px;
+    padding: 1.2rem;
+  }
+  .evo-stage {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .evo-mon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 110px;
+    padding: 0.6rem;
+    border-radius: 14px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .evo-mon:hover {
+    background: var(--card-2);
+    border-color: var(--ring);
+    transform: translateY(-4px);
+  }
+  .evo-mon.current {
+    background: var(--card-2);
+    border-color: var(--accent);
+    cursor: default;
+  }
+  .evo-mon img {
+    width: 84px;
+    height: 84px;
+    object-fit: contain;
+  }
+  .evo-mon small {
+    color: var(--muted);
+    margin-top: 0.2rem;
+  }
+  .evo-mon span {
+    font-weight: 600;
+  }
+  .evo-arrow {
+    color: var(--muted);
+    font-size: 1.4rem;
+  }
+  .evo-loading {
+    color: var(--muted);
+  }
+  .detail-error {
+    color: var(--muted);
+    text-align: center;
+    padding: 3rem;
+  }
+  .detail-error a {
+    color: #ffcb05;
+  }
+
+  /* ---------- Skeleton del detalle ---------- */
+  .detail-skeleton {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 1.5rem;
+    background: linear-gradient(160deg, var(--card-2), var(--card));
+    border: 1px solid var(--ring);
+    border-radius: 24px;
+    padding: 2rem;
+    margin-top: 2.5rem;
+  }
+  @media (max-width: 720px) {
+    .detail-skeleton {
+      grid-template-columns: 1fr;
+    }
+  }
+  .detail-skeleton .dsk-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    padding-top: 1rem;
+  }
+  .dsk {
+    border-radius: 10px;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.05) 25%,
+      rgba(255, 255, 255, 0.12) 37%,
+      rgba(255, 255, 255, 0.05) 63%
+    );
+    background-size: 400% 100%;
+    animation: shimmer 1.3s ease infinite;
+  }
+  .dsk-img {
+    width: 230px;
+    height: 230px;
+    border-radius: 50%;
+    margin: 0 auto;
+  }
+  .dsk-line {
+    height: 16px;
+  }
+  @keyframes shimmer {
+    0% {
+      background-position: 100% 0;
+    }
+    100% {
+      background-position: -100% 0;
+    }
+  }
+</style>

@@ -3,21 +3,21 @@ import Image from "astro/components/Image.astro";
 import pokemon from "../assets/pokemon.png";
 ---
 
-<nav class="bg-white border-gray-200 dark:bg-gray-900">
+<nav class="bg-[#141831] border-b border-white/10">
     <div
         class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2"
     >
         <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
-            <Image src={pokemon} class="h-8 w-8" alt="Flowbite Logo" />
+            <Image src={pokemon} class="h-8 w-8" alt="Pokédex logo" />
             <span
-                class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
-                >PokeApi</span
+                class="self-center text-2xl font-semibold whitespace-nowrap text-white"
+                >Pokédex</span
             >
         </a>
         <button
             data-collapse-toggle="navbar-default"
             type="button"
-            class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+            class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-300 rounded-lg md:hidden hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-gray-600"
         >
             <span class="sr-only">Open main menu</span>
             <svg
@@ -42,27 +42,19 @@ import pokemon from "../assets/pokemon.png";
             <ul
                 class="font-medium flex flex-col md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0"
             >
-                <li id="signup_option" class="text-center md:w-16">
+                <li class="text-center md:w-16">
                     <a
-                        href="/Register"
-                        class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-                        >Sing Up</a
+                        href="/"
+                        class="block py-2 px-3 rounded text-gray-200 hover:text-yellow-400 hover:bg-white/10 md:hover:bg-transparent md:p-0"
+                        >Home</a
                     >
                 </li>
-                <li id="login_option" class="text-center md:w-20">
+                <li class="text-center md:w-24">
                     <a
-                        href="/Login"
-                        class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-                        >Log in</a
+                        href="/?view=favorites"
+                        class="block py-2 px-3 rounded text-gray-200 hover:text-yellow-400 hover:bg-white/10 md:hover:bg-transparent md:p-0"
+                        >Favorites</a
                     >
-                </li>
-                <li id="Close_session" class="md:p-4 text-center md:w-40">
-                    <a
-                        href="#"
-                        class="py-2 px-3 text-red-600 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-red md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent sm:text-center whitespace-no-wrap"
-                    >
-                        Sign off
-                    </a>
                 </li>
             </ul>
             <ul
@@ -135,5 +127,3 @@ import pokemon from "../assets/pokemon.png";
         </div>
     </div>
 </nav>
-<script src="../controllers/validate_options_nav.js"></script>
-<script src="../controllers/close_session.js"></script>

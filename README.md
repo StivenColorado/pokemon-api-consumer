@@ -1,63 +1,58 @@
 # pokemon-api-consumer
 
-This mini project consists of consuming a pokemon api and validating sessions
+A frontend Pokédex that consumes the public [PokéAPI](https://pokeapi.co/), built with
+[Astro](https://astro.build/) + Tailwind CSS.
 
 ![pokeUI](https://github.com/StivenColorado/pokemon-api-consumer/assets/90488682/6c3cf2b5-75c9-49b8-bb06-ac5b8fd172c2)
 
 ## Description / Descripción
 
-This project consists of a Pokemon API consumer. It allows displaying all available Pokémon, and upon selecting one, it shows detailed information about its type and abilities. Additionally, the visualization of abilities is restricted to authenticated users. Users can register, and upon doing so, they can view detailed information about the desired Pokémon.
+Browse every Pokémon, search and filter them, save favorites, compare stats side by side
+and open a rich detail view (abilities, base stats, evolution chain, shiny artwork,
+animated sprites and the Pokémon cry). Everything runs in the browser against the public
+PokéAPI — there is no backend or authentication.
 
-Este proyecto consiste en un consumidor de la API de Pokémon. Permite mostrar todos los Pokémon disponibles y al seleccionar uno, muestra información detallada sobre su tipo y habilidades. Además, la visualización de las habilidades está restringida a usuarios autenticados. Los usuarios pueden registrarse y al hacerlo, podrán ver la información detallada del Pokémon que deseen.
+Explora todos los Pokémon, búscalos y fíltralos, guarda favoritos, compara estadísticas
+lado a lado y abre una vista de detalle enriquecida (habilidades, stats base, cadena de
+evolución, arte shiny, sprites animados y el sonido del Pokémon). Todo corre en el
+navegador contra la PokéAPI pública — no hay backend ni autenticación.
 
-## Installation / Instalación
+## Features / Funcionalidades
 
-1. Clone the repository to your local machine.
-2. Install the dependencies for Astro, JavaScript, and PHP according to the instructions provided in their respective documentations. located in frontend folder run --> npm i
-3. Start the local server.
+- 🔎 **Live search** by name or number.
+- 🏷️ **Type filters** in a single scrollable row of chips.
+- ❤️ **Favorites** persisted in `localStorage`, with a dedicated view.
+- ⇄ **Compare** up to 4 Pokémon with a side-by-side stat chart.
+- ♾️ **Infinite scroll** with skeleton loaders and a back-to-top button.
+- 🎬 **Animated sprites** (Showdown / Gen V) on card hover and via a toggle in the detail view.
+- 🔊 **Pokémon cry** playback with a soft fade-in.
+- 📄 **Rich detail page**: abilities, base stats, evolution chain and shiny toggle.
 
-4. Clona el repositorio en tu máquina local.
-5. Instala las dependencias de Astro, JavaScript y PHP según las instrucciones proporcionadas en sus respectivas documentaciones. Ubicado en la carpeta frontend, ejecutar --> npm i
-6. Inicia el servidor local.
+## Tech / Tecnología
 
-## Usage / Uso
+- [Astro](https://astro.build/) (static output)
+- Tailwind CSS + Flowbite
+- Vanilla JS controllers that consume the PokéAPI
+- **pnpm** as the package manager
 
-- Open the application in your browser. located in frontend folder run --> npm run dev
-- You will see a list of all available Pokémon.
-- Click on a Pokémon to view its detailed information.
-- If you are authenticated, you will be able to see the abilities of the selected Pokémon.
-- If you are not authenticated, you will be prompted to log in or register.
-- After logging in or registering, you will be able to view the detailed information of the desired Pokémon.
+## Getting started / Empezar
 
-- Abre la aplicación en tu navegador. ubicado en la carpeta frontend ejecutar --> npm run dev
-- Verás una lista de todos los Pokémon disponibles.
-- Haz clic en un Pokémon para ver su información detallada.
-- Si estás autenticado, podrás ver las habilidades del Pokémon seleccionado.
-- Si no estás autenticado, se te pedirá que inicies sesión o te registres.
-- Después de iniciar sesión o registrarte, podrás ver la información detallada del Pokémon que deseabas.
+> Requires Node.js >= 18 and [pnpm](https://pnpm.io/). The app lives in the `frontend/` folder.
 
-## Contribution / Contribución
+```sh
+cd frontend
+pnpm install
+pnpm dev      # start the dev server
+```
 
-Contributions are welcome 😉! If you want to contribute to this project, follow these steps:
-¡Las contribuciones son bienvenidas😉! Si deseas contribuir a este proyecto, sigue estos pasos:
+Then open the URL printed in the terminal. To build for production:
 
-1. Fork the repository.
-2. Clone your fork to your local machine.
-3. Create a new branch for your feature or fix (`git checkout -b feature/new-feature`).
-4. Make your changes and ensure everything works correctly.
-5. Commit your changes (`git commit -am 'Add new feature'`).
-6. Push your branch to the remote repository (`git push origin feature/new-feature`).
-7. Create a new pull request on GitHub.
-
-8. Haz un fork del repositorio.
-9. Clona tu fork en tu máquina local.
-10. Crea una nueva rama para tu función o corrección (`git checkout -b feature/nueva-funcion`).
-11. Haz tus cambios y asegúrate de que todo funcione correctamente.
-12. Haz commit de tus cambios (`git commit -am 'Agrega nueva función'`).
-13. Sube tu rama al repositorio remoto (`git push origin feature/nueva-funcion`).
-14. Crea una nueva solicitud de extracción en GitHub.
+```sh
+pnpm build    # output in frontend/dist/
+pnpm preview  # preview the production build
+```
 
 ## License / Licencia
 
-This project is licensed under the MIT License. See the `LICENSE` file for more details.
-Este proyecto está bajo la Licencia MIT. Consulta el archivo `LICENSE` para obtener más detalles.
+This project is licensed under the MIT License. See the `License.txt` file for more details.
+Este proyecto está bajo la Licencia MIT. Consulta el archivo `License.txt` para más detalles.

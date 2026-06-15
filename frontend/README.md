@@ -1,54 +1,39 @@
-# Astro Starter Kit: Basics
+# Pokédex (frontend)
 
-```sh
-npm create astro@latest -- --template basics
-```
-
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
-
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── components/
-│   │   └── Card.astro
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
+Astro + Tailwind CSS app that consumes the public [PokéAPI](https://pokeapi.co/).
+Managed with **pnpm**.
 
 ## 🧞 Commands
 
-All commands are run from the root of the project, from a terminal:
+All commands are run from this `frontend/` folder:
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+| Command         | Action                                       |
+| :-------------- | :------------------------------------------- |
+| `pnpm install`  | Install dependencies                         |
+| `pnpm dev`      | Start the local dev server                   |
+| `pnpm build`    | Build the production site to `./dist/`       |
+| `pnpm preview`  | Preview the production build locally         |
+| `pnpm astro ...`| Run Astro CLI commands (`astro add`, etc.)   |
 
-## 👀 Want to learn more?
+> The first `pnpm install` may ask to approve build scripts for `esbuild` and `sharp`.
+> They are pre-approved in `pnpm-workspace.yaml` (`allowBuilds`).
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+## 🗂️ Structure
+
+```text
+src/
+├── components/      # Astro UI pieces (Navbar, Metadata)
+├── controllers/     # Vanilla JS that consumes the PokéAPI and drives the pages
+│   ├── pokeApi.js       # cached API layer (index, detail, types, sprites)
+│   ├── store.js         # favorites + compare selection (localStorage)
+│   ├── getTypeColors.js # type colors / hex helpers
+│   ├── getAllPokemon.js # Pokédex grid: search, filters, infinite scroll, compare
+│   └── getInfoPokemon.js# detail view: abilities, stats, evolution, shiny, cry
+└── pages/
+    ├── index.astro      # Pokédex grid
+    └── infopokemon.astro# Pokémon detail
+```
+
+## 📚 Learn more
+
+See the [Astro docs](https://docs.astro.build).
