@@ -1,7 +1,11 @@
 {
-  "name": "frontend",
+  "name": "pokedex",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "packageManager": "pnpm@11.5.2",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -12,7 +16,8 @@
   "dependencies": {
     "@astrojs/tailwind": "^5.1.0",
     "astro": "^4.5.3",
-    "flowbite": "^2.3.0"
+    "flowbite": "^2.3.0",
+    "sharp": "^0.35.1"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.18",

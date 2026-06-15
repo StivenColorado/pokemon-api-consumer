@@ -1,81 +1,738 @@
 ---
 import Metadata from "../components/Metadata.astro";
 import Navbar from "../components/Navbar.astro";
-import Loading from "../components/Loading.astro";
 ---
 
-<Metadata title="Index" />
-<Loading />
+<Metadata title="Pokédex" />
 <Navbar />
 
-<div
-  class="fixed overflow-auto w-full h-screen bg-gradient-to-b from-red-800 via-red-500 to-red-700"
->
-  <div class="container mx-auto w-full px-4 sm:px-6 lg:px-8 bg-pokemon mb-40">
-    <h1 class="text-3xl font-bold text-center py-8 text-white">
-      Welcome to the Pokémon Characters Website
-      <div class="text-base font-bold text-center py-8">
-        Current Page: <span id="count_page"></span>
+<main class="pokedex">
+  <header class="hero">
+    <div class="hero-top">
+      <h1>Pokédex</h1>
+
+      <div class="search-wrap">
+        <svg
+          class="search-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.3-4.3"></path>
+        </svg>
+        <input
+          id="search"
+          type="search"
+          placeholder="Search by name or number…"
+          autocomplete="off"
+        />
       </div>
-    </h1>
-    <div
-      class="container mx-auto flex flex-row justify-center flex-wrap gap-10"
-      id="container-cards-pokemon"
-    >
+
+      <div class="filters-row">
+        <button id="fav-toggle" class="fav-toggle" data-active="false">
+          ★ Favorites
+        </button>
+        <span id="result-count" class="result-count"></span>
+      </div>
     </div>
+
+    <div id="type-filters" class="type-filters"></div>
+  </header>
+
+  <section id="grid" class="grid"></section>
+
+  <div id="empty" class="empty is-hidden">
+    <img src="/pokeball.png" alt="" />
+    <p>No Pokémon match your filters.</p>
+  </div>
+
+  <div id="infinite-loader" class="infinite-loader is-hidden">
+    <img src="/pokeball.png" alt="" />
+    <span>Loading more…</span>
+  </div>
+
+  <div id="sentinel" class="sentinel"></div>
+</main>
+
+<!-- Bandeja de comparación -->
+<div id="compare-tray" class="compare-tray">
+  <div id="compare-items" class="compare-items"></div>
+  <div class="compare-actions">
+    <button id="compare-open" class="btn-primary" disabled>Compare</button>
+    <button id="compare-clear" class="btn-ghost">Clear</button>
   </div>
 </div>
-<div class="fixed bottom-0 left-0 w-full flex justify-center">
-  <nav aria-label="Page navigation example" class="relative flex">
-    <ul class="flex -space-x-px text-base h-18">
-      <li
-        id="pag-atras"
-        class="flex items-center justify-center m-2 text-2xl text-white bg-transparent backdrop-blur rounded-lg border border-gray-500 shadow-lg min-w-[130px] transition duration-300 ease-in-out hover:bg-gray-800"
-      >
-        <div class="flex items-center">
-          <svg
-            class="w-5 h-5 text-gray-800 dark:text-white"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 10 16"
-          >
-            <path
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M7.293 1.707 1.707 7.293a1 1 0 0 0 0 1.414l5.586 5.586A1 1 0 0 0 9 13.586V2.414a1 1 0 0 0-1.707-.707Z"
-            ></path>
-          </svg>
-          <span class="ml-1">Previous</span>
-        </div>
-      </li>
-      <li
-        id="pag-adelante"
-        class="flex items-center justify-center m-2 text-2xl text-white bg-transparent backdrop-blur rounded-lg border border-gray-500 shadow-lg min-w-[130px] transition duration-300 ease-in-out hover:bg-gray-800"
-      >
-        <div class="flex items-center">
-          <span class="mr-1">Next</span>
-          <svg
-            class="w-5 h-5 text-gray-800 dark:text-white"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 10 16"
-          >
-            <path
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="m2.707 14.293 5.586-5.586a1 1 0 0 0 0-1.414L2.707 1.707A1 1 0 0 0 1 2.414v11.172a1 1 0 0 0 1.707.707Z"
-            ></path>
-          </svg>
-        </div>
-      </li>
-    </ul>
-  </nav>
+
+<!-- Modal de comparación -->
+<div id="compare-modal" class="modal">
+  <div class="modal-card">
+    <button id="compare-close" class="modal-close" aria-label="Close">×</button>
+    <h2>Stat comparison</h2>
+    <div id="compare-body"></div>
+  </div>
 </div>
 
+<button id="scroll-top" class="scroll-top" aria-label="Back to top">↑</button>
+
 <script src="../controllers/getAllPokemon.js"></script>
+
+<style is:global>
+  :root {
+    --bg: #0f1226;
+    --card: #1a1f3a;
+    --card-2: #232a4d;
+    --text: #eef1ff;
+    --muted: #9aa3c7;
+    --ring: rgba(255, 255, 255, 0.08);
+  }
+
+  html {
+    background: var(--bg);
+  }
+  body {
+    margin: 0;
+    color: var(--text);
+    font-family: "Inter", system-ui, sans-serif;
+    background:
+      radial-gradient(1200px 600px at 10% -10%, #2a1a4a 0%, transparent 60%),
+      radial-gradient(1000px 500px at 100% 0%, #1a2a4a 0%, transparent 55%),
+      var(--bg);
+    min-height: 100vh;
+  }
+
+  .pokedex {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem 6rem;
+  }
+
+  /* ---------- Hero / controles ---------- */
+  .hero {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    padding: 0.8rem 0 0.6rem;
+    background: linear-gradient(
+      to bottom,
+      var(--bg) 78%,
+      transparent 100%
+    );
+    backdrop-filter: blur(6px);
+  }
+  .hero-top {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .hero h1 {
+    margin: 0;
+    font-size: clamp(1.4rem, 3.5vw, 1.9rem);
+    font-weight: 800;
+    background: linear-gradient(90deg, #ffcb05, #ff5350);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    white-space: nowrap;
+  }
+  .hero-sub {
+    display: none;
+  }
+
+  .search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 220px;
+    max-width: 460px;
+  }
+  .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    color: var(--muted);
+  }
+  #search {
+    width: 100%;
+    padding: 0.55rem 1rem 0.55rem 2.6rem;
+    border-radius: 999px;
+    border: 1px solid var(--ring);
+    background: var(--card);
+    color: var(--text);
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  #search:focus {
+    border-color: #ffcb05;
+    box-shadow: 0 0 0 3px rgba(255, 203, 5, 0.2);
+  }
+
+  .filters-row {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-left: auto;
+  }
+  .fav-toggle {
+    border: 1px solid var(--ring);
+    background: var(--card);
+    color: var(--muted);
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .fav-toggle[data-active="true"] {
+    color: #1a1f3a;
+    background: #ffcb05;
+    border-color: #ffcb05;
+  }
+  .result-count {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  .type-filters {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.4rem;
+    margin-top: 0.6rem;
+    overflow-x: auto;
+    padding-bottom: 0.35rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--ring) transparent;
+    -webkit-overflow-scrolling: touch;
+  }
+  .type-filters::-webkit-scrollbar {
+    height: 6px;
+  }
+  .type-filters::-webkit-scrollbar-thumb {
+    background: var(--ring);
+    border-radius: 999px;
+  }
+  .type-chip-filter {
+    flex: 0 0 auto;
+    border: 1px solid var(--c);
+    color: var(--text);
+    background: transparent;
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: all 0.15s;
+  }
+  .type-chip-filter:hover {
+    opacity: 1;
+  }
+  .type-chip-filter.active {
+    background: var(--c);
+    color: #fff;
+    opacity: 1;
+    transform: translateY(-1px);
+  }
+
+  /* ---------- Grid de tarjetas ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+  .card-slot {
+    display: flex;
+  }
+
+  .poke-card {
+    position: relative;
+    width: 100%;
+    background: linear-gradient(160deg, var(--card-2), var(--card));
+    border: 1px solid var(--ring);
+    border-radius: 18px;
+    padding: 1rem 1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    overflow: hidden;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s;
+  }
+  .poke-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle at 50% 0%,
+      var(--accent) 0%,
+      transparent 70%
+    );
+    opacity: 0.18;
+    transition: opacity 0.2s;
+  }
+  .poke-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--accent);
+    box-shadow: 0 14px 30px -12px var(--accent);
+  }
+  .poke-card:hover::before {
+    opacity: 0.35;
+  }
+
+  .poke-deco {
+    position: absolute;
+    width: 130px;
+    height: 130px;
+    right: -34px;
+    top: -34px;
+    opacity: 0.08;
+    transition: transform 0.4s;
+  }
+  .poke-card:hover .poke-deco {
+    transform: rotate(180deg) scale(1.1);
+  }
+
+  .poke-img-wrap {
+    position: relative;
+    width: 130px;
+    height: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .poke-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.45));
+    transition: transform 0.25s;
+  }
+  .poke-card:hover .poke-img {
+    transform: scale(1.12) translateY(-4px);
+  }
+  .poke-img.animated {
+    image-rendering: pixelated;
+    object-fit: contain;
+  }
+
+  .poke-num {
+    position: relative;
+    color: var(--muted);
+    font-weight: 700;
+    margin-top: 0.4rem;
+  }
+  .poke-name {
+    position: relative;
+    margin: 0.15rem 0 0.6rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+  .poke-types {
+    display: flex;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .type-chip {
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.18rem 0.6rem;
+    border-radius: 999px;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Botones de icono (favorito / comparar) */
+  .icon-btn {
+    position: absolute;
+    top: 0.6rem;
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: 1px solid var(--ring);
+    background: rgba(0, 0, 0, 0.35);
+    color: var(--muted);
+    cursor: pointer;
+    z-index: 3;
+    transition: all 0.18s;
+  }
+  .icon-btn:hover {
+    transform: scale(1.12);
+    color: #fff;
+  }
+  .fav-btn {
+    left: 0.6rem;
+  }
+  .fav-btn.active {
+    color: #ff4d6d;
+    border-color: #ff4d6d;
+  }
+  .cmp-btn {
+    right: 0.6rem;
+  }
+  .cmp-btn.active {
+    color: #4dd2ff;
+    border-color: #4dd2ff;
+  }
+
+  /* ---------- Skeletons ---------- */
+  .skeleton {
+    cursor: default;
+    pointer-events: none;
+  }
+  .sk {
+    border-radius: 8px;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.05) 25%,
+      rgba(255, 255, 255, 0.12) 37%,
+      rgba(255, 255, 255, 0.05) 63%
+    );
+    background-size: 400% 100%;
+    animation: shimmer 1.3s ease infinite;
+  }
+  .sk-img {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+  }
+  .sk-num {
+    width: 38px;
+    height: 16px;
+    margin-top: 0.4rem;
+  }
+  .sk-name {
+    width: 65%;
+    height: 22px;
+    margin: 0.35rem 0 0.7rem;
+  }
+  .sk-types {
+    display: flex;
+    gap: 0.35rem;
+  }
+  .sk-chip {
+    width: 54px;
+    height: 22px;
+    border-radius: 999px;
+  }
+  @keyframes shimmer {
+    0% {
+      background-position: 100% 0;
+    }
+    100% {
+      background-position: -100% 0;
+    }
+  }
+
+  /* ---------- Animaciones ---------- */
+  .fade-in {
+    animation: fadeInUp 0.4s ease both;
+  }
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .fade-out {
+    animation: fadeOut 0.25s ease both;
+  }
+  @keyframes fadeOut {
+    to {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+  }
+
+  /* ---------- Vacío ---------- */
+  .empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 3rem 0;
+  }
+  .empty img {
+    width: 80px;
+    opacity: 0.4;
+    animation: floaty 2.5s ease-in-out infinite;
+  }
+  @keyframes floaty {
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  .is-hidden {
+    display: none !important;
+  }
+  .sentinel {
+    height: 1px;
+  }
+
+  /* ---------- Loader de scroll infinito ---------- */
+  .infinite-loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7rem;
+    color: var(--muted);
+    font-weight: 600;
+    padding: 1.6rem 0 0.4rem;
+  }
+  .infinite-loader img {
+    width: 28px;
+    height: 28px;
+    animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* ---------- Bandeja de comparación ---------- */
+  .compare-tray {
+    position: fixed;
+    left: 50%;
+    bottom: 1rem;
+    transform: translate(-50%, 200%);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.6rem 0.9rem;
+    background: rgba(20, 24, 48, 0.92);
+    border: 1px solid var(--ring);
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 18px 40px -16px #000;
+    z-index: 40;
+    transition: transform 0.3s ease;
+    max-width: calc(100% - 2rem);
+  }
+  .compare-tray.show {
+    transform: translate(-50%, 0);
+  }
+  .compare-tray.shake {
+    animation: shake 0.4s;
+  }
+  @keyframes shake {
+    25% { transform: translate(-52%, 0); }
+    75% { transform: translate(-48%, 0); }
+  }
+  .compare-items {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .tray-item {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--card-2);
+    border: 1px solid var(--ring);
+    cursor: pointer;
+  }
+  .tray-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .tray-x {
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #ff4d6d;
+    color: #fff;
+    font-size: 12px;
+    line-height: 18px;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .tray-item:hover .tray-x {
+    opacity: 1;
+  }
+  .compare-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .btn-primary {
+    background: #ffcb05;
+    color: #1a1f3a;
+    border: none;
+    border-radius: 999px;
+    padding: 0.5rem 1rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--ring);
+    border-radius: 999px;
+    padding: 0.5rem 0.9rem;
+    cursor: pointer;
+  }
+
+  /* ---------- Modal de comparación ---------- */
+  .modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 60;
+    padding: 1rem;
+  }
+  .modal.show {
+    display: flex;
+    animation: fadeIn 0.2s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+  }
+  .modal-card {
+    position: relative;
+    width: 100%;
+    max-width: 760px;
+    max-height: 90vh;
+    overflow: auto;
+    background: var(--card);
+    border: 1px solid var(--ring);
+    border-radius: 20px;
+    padding: 1.5rem;
+  }
+  .modal-card h2 {
+    margin: 0 0 1rem;
+  }
+  .modal-close {
+    position: absolute;
+    top: 0.8rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 1.8rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .cmp-grid {
+    display: grid;
+    grid-template-columns: 90px repeat(var(--cols), 1fr);
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.35rem 0;
+  }
+  .cmp-head {
+    align-items: end;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid var(--ring);
+    padding-bottom: 0.8rem;
+  }
+  .cmp-mon {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+  }
+  .cmp-mon img {
+    width: 84px;
+    height: 84px;
+    object-fit: contain;
+  }
+  .cmp-mon small {
+    color: var(--muted);
+  }
+  .cmp-stat-label {
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+  .cmp-bar-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .cmp-bar-track {
+    flex: 1;
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+  }
+  .cmp-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.5s ease;
+  }
+  .cmp-val {
+    min-width: 30px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  .cmp-val.best {
+    color: #6ee787;
+    font-weight: 800;
+  }
+  .cmp-total {
+    margin-top: 0.5rem;
+    border-top: 1px solid var(--ring);
+    padding-top: 0.7rem;
+    font-weight: 700;
+  }
+  .cmp-total .cmp-val {
+    font-size: 1rem;
+  }
+
+  /* ---------- Volver arriba ---------- */
+  .scroll-top {
+    position: fixed;
+    right: 1.2rem;
+    bottom: 1.2rem;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: none;
+    background: #ffcb05;
+    color: #1a1f3a;
+    font-size: 1.3rem;
+    font-weight: 800;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(20px);
+    transition: all 0.25s;
+    z-index: 45;
+    box-shadow: 0 10px 24px -10px #000;
+  }
+  .scroll-top.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+</style>

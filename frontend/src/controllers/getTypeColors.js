@@ -58,3 +58,29 @@ export const getBgProgress = (type) => {
     };
     return typeColors[type] || typeColors['default']
 }
+
+// Lista completa de tipos (orden de la Pokédex)
+export const TYPES = [
+    "normal", "fire", "water", "grass", "electric", "ice", "fighting",
+    "poison", "ground", "flying", "psychic", "bug", "rock", "ghost",
+    "dark", "dragon", "steel", "fairy",
+];
+
+// Colores hex canónicos por tipo: se usan como estilos inline en chips y barras,
+// así no dependen del purgado de Tailwind ni del CDN.
+export const getTypeHex = (type) => ({
+    normal: "#9099a1", fire: "#ff9d55", water: "#4d90d5", grass: "#63bc5a",
+    electric: "#f4d23c", ice: "#73cec0", fighting: "#ce4069", poison: "#ab6ac8",
+    ground: "#d97746", flying: "#8fa8dd", psychic: "#f97176", bug: "#90c12c",
+    rock: "#c7b78b", ghost: "#5269ad", dark: "#5a5366", dragon: "#0b6dc3",
+    steel: "#5a8ea1", fairy: "#ec8fe6", default: "#68a090",
+}[type] || "#68a090");
+
+// Color de la barra de un stat según su valor (rojo bajo → verde alto)
+export const getStatHex = (value) => {
+    if (value < 50) return "#ef5350";
+    if (value < 80) return "#ffb74d";
+    if (value < 110) return "#ffd54f";
+    if (value < 140) return "#9ccc65";
+    return "#4caf50";
+};
